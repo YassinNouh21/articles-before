@@ -27,7 +27,7 @@ According to a survey conducted by Stack Overflow, over **70% of developers** co
 
 The `try/catch` construct is widely used in many programming languages, including [JavaScript](https://javascript.info/try-catch), [Java](https://medium.com/@AlexanderObregon/java-exception-handling-throws-vs-try-catch-94b0abe1080d), and [C++](https://stackoverflow.com/questions/6900195/try-catch-vs-return-error-code-in-c). This method allows developers to attempt to execute a block of code (`try`) and catch any exceptions that occur (`catch`), providing a mechanism to handle errors gracefully.
 
-**Example: Using try/except in Python**
+#### Example: Using try/except in Python**
 ```
 def read_file(filepath):
     try:
@@ -61,6 +61,39 @@ else:
 ### Returning Error Objects
 
 Returning error objects is another common approach, particularly in languages like [C++](https://stackoverflow.com/questions/6900195/try-catch-vs-return-error-code-in-c) and [JavaScript](https://levelup.gitconnected.com/javascript-try-catch-error-and-exception-handling-guide-352526468245). This method involves returning a special error object or code from a function to indicate that an error has occurred.
+
+#### Example: Returning Error Objects in Go
+```
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "os"
+)
+
+func readFile(filepath string) (string, error) {
+    data, err := ioutil.ReadFile(filepath)
+    if err != nil {
+        return "", err
+    }
+    return string(data), nil
+}
+
+func main() {
+    data, err := readFile("example.txt")
+    if err != nil {
+        if os.IsNotExist(err) {
+            fmt.Println("Error: File not found.")
+        } else {
+            fmt.Println("Error:", err)
+        }
+    } else {
+        fmt.Println("File content:")
+        fmt.Println(data)
+    }
+}
+```
 
 **Pros:**
 - **Performance:** Returning error objects generally has less performance overhead compared to `try/catch` blocks.
