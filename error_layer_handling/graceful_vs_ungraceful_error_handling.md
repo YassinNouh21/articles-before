@@ -37,48 +37,34 @@ In this example, the application catches the `ApiException` and returns `null`. 
 
 ### What is Ungraceful Error Handling?
 
-Ungraceful error handling, on the other hand, occurs when an application does not adequately manage errors, leading to crashes, unpredictable behavior, or a poor user experience. This often happens when errors are ignored, not caught, or when the application fails to provide meaningful feedback to the user.
+Ungraceful error handling refers to an approach where errors are handled in a manner that may not be user-friendly or may disrupt the flow of the application. This often involves throwing exceptions and allowing them to propagate up the call stack without providing a controlled or informative response to the user. In some cases, this approach might be necessary, but it can lead to a poor user experience if not managed carefully.
 
-Ungraceful error handling can manifest in several ways:
+Ungraceful error handling typically involves:
 
-1. **Uncaught exceptions**: Allowing exceptions to propagate without being caught, potentially crashing the application.
-2. **Poor user feedback**: Providing vague or non-informative error messages that leave the user confused.
-3. **Data corruption**: Failing to handle errors in a way that preserves data integrity, leading to corrupted or lost data.
-4. **Security risks**: Not managing errors securely, potentially exposing the application to vulnerabilities.
+1. **Throwing exceptions immediately**: The application throws an exception whenever an error occurs, such as when a user is not found in the database. This exception is often propagated up the call stack.
+2. **Interrupting the application flow**: When an exception is thrown, it may terminate the current operation, potentially leading to an abrupt halt in the application's workflow.
+3. **Providing limited feedback**: Because the error is thrown immediately, the user might receive a technical error message or no feedback at all, leading to confusion.
 
 #### Example of Ungraceful Error Handling
 
-Continuing with the e-commerce example, ungraceful error handling could involve not catching the exception at all, leading to a crash:
+Consider an e-commerce application where the system is designed to fetch a user's details by their ID from the database. If the user is not found, the application throws an exception rather than returning a `null` or an `Optional<User>`.
 
 ```java
-public Product getProductDetails(String productId) {
-    return externalApi.getProductById(productId); 
-    // If this fails, the application may crash or behave unpredictably
-}
-```
-
-In this scenario, if the `externalApi.getProductById(productId)` call fails, the exception is not caught, potentially causing the application to crash. This is an example of ungraceful error handling, as it does not account for potential failures, leading to a poor user experience.
-
-### The Pitfalls of Graceful Error Handling
-
-While graceful error handling is generally preferred, it is not without its challenges. One common pitfall is the potential for **silent failures**. When errors are caught and handled by returning default values (e.g., `null`), the calling code may not be aware that an error occurred, leading to confusion or bugs.
-
-Consider the following scenario:
-
-```java
-public void processProduct(String productId) {
-    Product product = productService.getProductDetails(productId);
-    if (product == null) {
-        // Was there no product, or did the API fail?
-        // The caller doesn't know!
-        System.out.println("No product details found.");
-    } else {
-        // Process the product details
+public User getUserById(String userId) throws UserNotFoundException {
+    User user = database.findUserById(userId);
+    if (user == null) {
+        throw new UserNotFoundException("User with ID " + userId + " not found.");
     }
+    return user;
 }
 ```
 
-In this case, the caller does not know whether `product == null` indicates that the product does not exist or that the API call failed. This ambiguity can lead to incorrect assumptions and potential bugs in the application.
+### The Pitfalls of Ungraceful Error Handling
+
+While throwing exceptions can be necessary in some cases, relying on this approach too heavily can lead to several issues:
+
+1. **Unnecessary complexity**: Continuously handling propagated exceptions can make the codebase more complex and harder to maintain.
+2. **Difficult to manage flow**: If exceptions are not caught at the right level, they can lead to unhandled exceptions that might crash the application or leave it in an inconsistent state.
 
 ### Best Practices for Error Handling
 
@@ -158,7 +144,6 @@ To effectively manage errors, developers should strike a balance between gracefu
         return null; // Should never reach here
     }
     ```
-   
 
 ### A Practical Example
 
