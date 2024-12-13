@@ -2,6 +2,8 @@
 
 Notebooks often result in spaghetti-like code structures. LangGraph addresses this by introducing a **node-based modular architecture**, where workflows are represented as graphs and every node performs a granular, independent task. This abstraction helps developers debug, extend, and deploy AI agents more efficiently.
 
+![Screenshot 2024-12-13 at 9 50 17 PM](https://github.com/user-attachments/assets/43459a73-2dfa-4555-9de5-00115746d4e1)
+
 ---
 
 ## Core Concepts in LangGraph
